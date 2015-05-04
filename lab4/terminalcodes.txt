@@ -1,0 +1,3 @@
+ 1745 vi quiz1.c
+ 1746  gcc quiz1.c -o quiz1
+ 1747  ./quiz1 

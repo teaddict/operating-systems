@@ -1,0 +1,89 @@
+/*
+ * =====================================================================================
+ *
+ *       Filename:  quiz.c
+ *
+ *    Description:  
+ *
+ *        Version:  1.0
+ *        Created:  14/04/15 17:04:25
+ *       Revision:  none
+ *       Compiler:  gcc
+ *
+ *         Author:  teaddict (), cyberasker@gmail.com
+ *        Company:  
+ *
+ * =====================================================================================
+ */
+
+#include<stdio.h>
+#include<pthread.h>
+#include<semaphore.h>
+
+/*function prototype for the thread function.*/
+void * thread_function1();
+void * thread_function2();
+void * thread_function3();
+
+/*global variables.*/
+int value=0;
+
+/*global semaphore variables.*/
+sem_t sem1,sem2,sem3;
+
+int main(){
+	pthread_t t1,t2,t3;
+
+	sem_init(&sem1,0,0);
+	sem_init(&sem2,0,0);
+	sem_init(&sem3,0,0);
+
+	pthread_create(&t1,NULL,thread_function1,NULL);
+	pthread_create(&t2,NULL,thread_function2,NULL);
+	pthread_create(&t3,NULL,thread_function3,NULL);
+
+		
+	pthread_join(t1,NULL);
+	pthread_join(t2,NULL);
+	pthread_join(t3,NULL);
+	sem_destroy(&sem1);
+	sem_destroy(&sem2);
+	sem_destroy(&sem3);
+
+}
+
+
+void * thread_function1()
+{
+	printf("\nI am Thread_A -> count: <%d>\n",++value);
+	sem_post(&sem2);
+	sem_wait(&sem1);
+	printf("\nI am Thread_A -> count: <%d>\n",++value);
+	sem_post(&sem3);
+	return 0;
+}
+
+
+void * thread_function2()
+{
+	sem_wait(&sem2);
+	value=value+2;
+	printf("\nI am Thread_B -> count: <%d>\n",value);
+	sem_post(&sem1);
+
+	sem_wait(&sem2);
+	value=value+2;
+	printf("\nI am Thread_B -> count: <%d>\n",value);
+	return 0;
+}
+
+void * thread_function3()
+{
+	sem_wait(&sem3);
+	value=value+3;
+	printf("\nI am Thread_C -> count: <%d>\n",value);
+	sem_post(&sem2);
+	return 0;
+}
+
+

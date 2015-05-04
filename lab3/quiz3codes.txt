@@ -1,0 +1,3 @@
+ 1347  vi exp3.c
+ 1348  gcc exp3.c -o exp3 -lpthread
+ 1349  ./exp3
